@@ -1,0 +1,196 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+<style>
+    body {
+      background-image: url('https://www.wsav.com/wp-content/uploads/sites/75/2016/02/dark-storm-clouds_38851951_ver1.0.jpg');
+    }
+    </style>
+
+<div style="padding:3%;  backdrop-filter: blur(10px);  width:400px;  margin:auto; border-width:thin; border-style:solid; border-color:rgb(100,100,100);">
+    <form action="/register" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text">
+            <div id="kokot"></div>
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+        </div>
+        <div id="condition1" class="password_contains">
+            Password has at least 8 characters
+        </div>
+        <div id="condition2" class="password_contains">
+            Password contains a digit
+        </div>
+        <div id="condition3" class="password_contains">
+            Password contains at least one uppercase and one lower case letter
+        </div>
+
+        <br>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="confirmation" name="confirmation" placeholder="Confirm your password" type="password">
+            <br>
+            <div id="matching" ></div>
+        </div>
+        <button id="register-btn" class="btn btn-primary" type="submit" disabled="true">Register</button>
+
+        <div> <br> <a href="/login"> Login </a> if you are already registered </div>
+
+        <script>
+
+            let username = document.querySelector('#username')
+            let input = document.querySelector('#password');
+            let condition1 = document.querySelector('#condition1');
+            let condition2 = document.querySelector('#condition2');
+            let condition3 = document.querySelector('#condition3');
+
+            let condition_one = false;
+            let condition_two = false;
+            let condition_three = false;
+            let condition_username = false;
+
+
+            username.addEventListener('keyup',(event) => {
+                if (username.value.length > 0)
+                {
+                    condition_username = true;
+
+                    if ((condition_one == true) && (condition_two == true) && (condition_three == true) && (condition_match == true) && (condition_username == true))
+                    {
+                        button.disabled = false;
+                    }
+                    else
+                    {
+                        button.disabled = true;
+                    }
+                }
+                else
+                {
+                    condition_username = false;
+
+                    if ((condition_one == true) && (condition_two == true) && (condition_three == true) && (condition_match == true) && (condition_username == true))
+                    {
+                        button.disabled = false;
+                    }
+                    else
+                    {
+                        button.disabled = true;
+                    }
+                }
+
+            });
+
+
+            input.addEventListener('keyup',(event) => {
+                if (input.value.length > 7)
+                {
+                    condition1.style.color = "green";
+                    condition_one = true;
+
+                    if ((condition_one == true) && (condition_two == true) && (condition_three == true) && (condition_match == true) && (condition_username == true))
+                    {
+                        button.disabled = false;
+                    }
+                    else
+                    {
+                        button.disabled = true;
+                    }
+                }
+                else
+                {
+                    condition1.style.color = "red";
+                    condition_one = false;
+                }
+
+                inputValue = input.value
+
+                if (inputValue.match(/[0-9]/))
+                {
+                    condition2.style.color = "green";
+                    condition_two = true;
+
+                    if ((condition_one == true) && (condition_two == true) && (condition_three == true) && (condition_match == true) && (condition_username == true))
+                    {
+                        button.disabled = false;
+                    }
+                    else
+                    {
+                        button.disabled = true;
+                    }
+                }
+                else
+                {
+                    condition2.style.color = "red";
+                    condition_two = false;
+
+                }
+
+                if ((inputValue.match(/[A-Z]/)) && (inputValue.match(/[a-z]/))) // contains both uppercase and lowercase
+                {
+                    condition3.style.color = "green";
+                    condition_three = true;
+
+                    if ((condition_one == true) && (condition_two == true) && (condition_three == true) && (condition_match == true) && (condition_username == true))
+                    {
+                        button.disabled = false;
+                    }
+                    else
+                    {
+                        button.disabled = true;
+                    }
+
+                }
+                else
+                {
+                    condition3.style.color = "red";
+                    condition_three = false;
+
+                }
+
+            });
+
+
+            let matching = document.querySelector('#matching')
+            let password = document.querySelector('#password');
+            let button = document.querySelector('#register-btn');
+            let confirmation = document.querySelector('#confirmation');
+
+            let condition_match = false;
+
+            confirmation.addEventListener('keyup',(event) => {
+                if (password.value == confirmation.value)
+                {
+                    matching.innerHTML = "Passwords match";
+                    matching.style.color = 'green';
+                    condition_match = true;
+
+                    if ((condition_one == true) && (condition_two == true) && (condition_three == true) && (condition_match == true) && (condition_username == true))
+                    {
+                        button.disabled = false;
+                    }
+                    else
+                    {
+                        button.disabled = true;
+                    }
+
+                }
+                else
+                {
+                    matching.innerHTML = "Passwords don't match";
+                    matching.style.color = 'red';
+                    condition_match = false;
+                    button.disabled = true;
+                }
+
+            });
+
+
+        </script>
+
+    </form>
+</div>
+{% endblock %}

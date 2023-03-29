@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" rel="stylesheet">
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
+
+    <link href="/static/styles.css" rel="stylesheet">
+    <script src="/static/script.js" defer></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+    <title>Disciplined</title>
+    <link rel="icon" href="https://w7.pngwing.com/pngs/32/493/png-transparent-muscle-emoji-emoji-biceps-human-skin-color-muscle-arm-hand-orange-people.png" type="image/x-icon">
+
+    <style>
+
+        .navig-bar{
+            position:fixed;
+            top: 0;
+
+        }
+
+        .content {
+            margin-top: 60px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="navig-bar" style="z-index:100; background-color:#ffffff; width:100%;">
+    <nav class=" navbar navbar-expand-md navbar-light ">
+        <div class="container-fluid ">
+            <a class="navbar-brand" href="/">Disciplined</a>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav me-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="#">Calendar</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#habit_overview">My Habits</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#new_habit">Start a Habit</a></li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                    </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+    {% if get_flashed_messages() %}
+        <header>
+            <div class="alert alert-primary mb-0 text-center" role="alert">
+                {{ get_flashed_messages() | join(" ") }}
+            </div>
+        </header>
+    {% endif %}
+
+    <main class="container-fluid py-5 text-center">
+
+
+
+<style>
+    body {
+        background-color:rgb(200,200,255)
+
+    }
+
+</style>
+
+<h2 id="calendar" class="content"> Calendar</h2>
+
+
+<script>
+/*
+let squares = document.querySelectorAll('.square');
+
+squares.forEach((square) => {
+  const number = parseInt(square.getAttribute('scale_number'));
+
+  square.style.backgroundColor = `rgb(${255 - ((number - 1) * 25)}, ${255 - ((number - 1) * 25)}, ${255 - ((number - 1) * 25)})`;
+
+  square.addEventListener('click', () => {
+    squares.forEach((sq) => {
+      const sqNumber = parseInt(sq.getAttribute('scale_number'));
+
+      if (sqNumber <= number) {
+        sq.style.backgroundColor = `rgb(${255 - ((number - 1) * 25)}, ${sqNumber * 25}, ${sqNumber * 25})`;
+      }
+    });
+  });
+});
+*/
+
+</script>
+
+
+<br><br>
+
+
+<div class="wrapper">
+    <header>
+    <p class="current-date"></p>
+    <div class="icons">
+        <span id="prev" class="material-symbols-rounded">chevron_left</span>
+        <span id="next" class="material-symbols-rounded">chevron_right</span>
+    </div>
+    </header>
+    <div class="calendar">
+    <ul class="weeks">
+        <li>Sun</li>
+        <li>Mon</li>
+        <li>Tue</li>
+        <li>Wed</li>
+        <li>Thu</li>
+        <li>Fri</li>
+        <li>Sat</li>
+    </ul>
+    <ul class="days"></ul>
+    </div>
+</div>
+
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br id="habit_overview"><br><br>
+
+<h2 class="content"> Habit Overview </h2>
+
+<div>
+
+<br>
+
+{% for habit in habits %}
+
+<div id="habitField" style="background-color:rgb(245,245,245); border-style: solid; border-radius:30px; width:400px; margin:auto; margin-bottom:70px;">
+    <div id="habitName" style="border-radius:30%; font-size:40px;">
+        <input name="color" id="color" type="hidden" value="{{habit.color}}" >
+        {{ habit.name }}
+    </div>
+    <div id="expired" style="display:none; position:relative; left:285px; top:-70px; width:150px; transform: rotate(35deg); background-color:rgb(100,100,100); font-size:25px; ; padding:5px; border-radius:20px;; z-index:5;">
+        EXPIRED
+        <input name="endeMonth2" id="endeMonth2" type="hidden" value="{{habit.ende_month}}">
+        <input name="endeDay2" id="endeDay2" type="hidden" value="{{habit.ende_day}}">
+        <input name="endeYear2" id="endeYear2" type="hidden" value="{{habit.ende_year}}">
+    </div>
+    <br>
+    <div>{{ habit.description }}</div>
+    <br>
+    <div> Start: {{ habit.start_month }}/{{ habit.start_day }}/{{ habit.start_year }} </div>
+    <br>
+    <div>
+        End:
+        {% if habit.ende_year == 2103 and habit.ende_month == 2 and habit.ende_day == 14 %}
+            not set
+        {% else %}
+            {% if habit.expiration >= 0 %}
+                {{ habit.ende_month }}/{{ habit.ende_day }}/{{ habit.ende_year }} (in {{ habit.expiration }} days)
+            {% else %}
+                {{ habit.ende_month }}/{{ habit.ende_day }}/{{ habit.ende_year }}
+            {% endif %}
+        {% endif %}
+
+    <!--<div id="expInField"> (in x days) </div>-->
+
+    </div>
+    <br>
+    <div>
+        <div>
+            <form action="/edit" method="post">
+                <input name="ende_month" id="ende_month" type="hidden" value="{{habit.ende_month}}">
+                <input name="ende_day" id="ende_day" type="hidden" value="{{habit.ende_day}}">
+                <input name="ende_year" id="ende_year" type="hidden" value="{{habit.ende_year}}">
+                <input name="habit_id" id="habit_id" type="hidden" value="{{habit.id}}">
+                <input name="habit_name" id="habit_name" type="hidden" value="{{habit.name}}" >
+                <input name="habit_description" id="habit_description" type="hidden" value="{{habit.description}}" >
+                <input name="start_month" id="start_month" type="hidden" value="{{habit.start_month}}">
+                <input name="start_day" id="start_day" type="hidden" value="{{habit.start_day}}" >
+                <input name="start_year" id="start_year" type="hidden" value="{{habit.start_year}}">
+                <input name="color_val" id="color_val" type="hidden" value="{{habit.color}}">
+                <button type="submit"> Edit Habit </button>
+            </form>
+        </div>
+        <br>
+        <div>
+            <form action="/delete" method="post">
+                <input id="habit_id" name="habit_id" type="hidden" value="{{habit.id}}">
+                <button type="submit"> Delete Habit </button>
+            </form>
+        </div>
+        <br>
+    </div>
+</div>
+
+<br><br>
+{% endfor %}
+
+</div>
+
+
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+<br id="new_habit">
+<h2 class="content"> Start a New Habit</h2>
+<div>
+    <form action="/new_habit" method="post">
+        <div style="margin: 40px;"> <input id="habit-name" name="habit-name" type="text" autocomplete="off" placeholder="Name of the Habit" style="width:300px;" maxlength="50"> </div>
+        <div style="margin: 40px;"> <input id="color-inp" name="color-inp" type="hidden"> </div>
+        <div style="margin: 40px;"> <textarea id="description" name="description" maxlength="200" placeholder="Add Description" type="text" autocomplete="off" style=" width: 200px; resize: none;" oninput='this.style.height = ""; this.style.height = this.scrollHeight + "px"'></textarea> </div>
+
+        <div style=" background-color:rgb(240,240,240); position:relative; z-index:0; margin:40px; left:570px; width:200px; height: 150px;">
+            <div style="position:absolute;">
+                <div id="red-button" style="background-color:rgb(255,0,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- RED --> </div>
+                <div id="orange-button" style="background-color:rgb(255,160,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- ORANGE --></div>
+            </div>
+            <div style="position:absolute; left:60px;">
+                <div id="yellow-button"  style="background-color:rgb(255,255,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- YELLOW --></div>
+                <div id="green-button" style="background-color:rgb(0,255,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- GREEN --></div>
+            </div>
+            <div style="position:absolute; left:120px;">
+                <div id="blue-button"  style="background-color:rgb(0,0,255); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- BLUE --></div>
+                <div id="purple-button"  style="background-color:rgb(255,0,255); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- PURPLE --></div>
+            </div>
+        </div>
+
+        <div>
+            <div>Optionally, choose the duration of your habit. You can always change habits later.</div>
+            <div style="margin:20px;"> <input id="duration" name="duration" style="width:70px;" type="number" min="1" max="10000" oninput="validity.valid||(value='')"> </div>
+        </div>
+        <div style="margin: 40px;"> <button id="submit" type="submit"> Start Habit </button> </div>
+
+
+    </form>
+
+</div>
+
+
+    <script>
+
+window.addEventListener('load', () => {
+    const expired = document.querySelectorAll("#expired");
+
+    const date = new Date();
+    const currYear = date.getFullYear();
+    let month = date.getMonth();
+    const currMonth = month + 1;
+    const currDay = date.getDate();
+
+    expired.forEach(expire => {
+
+        let ende_month = parseInt(expire.querySelector("#endeMonth2").value);
+        let ende_day = parseInt(expire.querySelector("#endeDay2").value);
+        let ende_year = parseInt(expire.querySelector("#endeYear2").value);
+
+        if (currYear > ende_year){
+            expire.style.display = "block";
+        };
+
+        if (currDay > ende_day){
+            if (currMonth >= ende_month){
+                if (currYear == ende_year){
+                    expire.style.display = "block";
+                };
+            };
+        };
+
+        if (currMonth > ende_month){
+            if (currYear == ende_year){
+                expire.style.display = "block";
+            };
+        };
+
+        if (currMonth == ende_month && currDay == ende_day && currYear == ende_year){
+            expire.style.display = "none";
+        };
+
+    });
+
+
+
+
+
+    const colored_squares = document.querySelectorAll("#habitName");
+
+    colored_squares.forEach(square => {
+        let farba = square.querySelector("#color").value;
+
+        if (farba == "rot"){
+            square.style.backgroundColor = 'rgb(255,0,0)';
+        }
+        else if (farba == "orange"){
+            square.style.backgroundColor = 'rgb(255, 137,0)';
+        }
+        else if (farba == "gelb"){
+            square.style.backgroundColor = 'rgb(255,255,0)';
+        }
+        else if (farba == "grün"){
+            square.style.backgroundColor = 'rgb(0,255,0)';
+        }
+        else if (farba == "blau"){
+            square.style.backgroundColor = 'rgb(0,247,255)';
+        }
+        else if (farba == "violett"){
+            square.style.backgroundColor = 'rgb(160, 32, 240)';
+        }
+    });
+
+    /*
+    const habitFields = document.querySelectorAll("#habitField");
+
+    habitFields.forEach(habitField => {
+        console.log(habitField);
+
+        let ende_month = parseInt(habitField.querySelector("#ende_month").value);
+        let ende_day = parseInt(habitField.querySelector("#ende_day").value);
+        let ende_year = parseInt(habitField.querySelector("#ende_year").value);
+
+
+
+    });
+    */
+
+});
+
+        let index = null;
+
+
+        let red = document.querySelector("#red-button");
+        let orange = document.querySelector("#orange-button");
+        let yellow = document.querySelector("#yellow-button");
+        let green = document.querySelector("#green-button");
+        let blue = document.querySelector("#blue-button");
+        let purple = document.querySelector("#purple-button");
+
+
+
+        function zaklad(){
+            if (index != "rot")
+            red.style.opacity = 0.3;
+            if (index != "orange")
+            orange.style.opacity = 0.3;
+            if (index != "gelb")
+            yellow.style.opacity = 0.3;
+            if (index != "grün")
+            green.style.opacity = 0.3;
+            if (index != "blau")
+            blue.style.opacity = 0.3;
+            if (index != "violett")
+            purple.style.opacity = 0.3;
+        }
+
+        function zaklad_click(){
+            red.style.border = "none";
+            orange.style.border = "none";
+            yellow.style.border = "none";
+            green.style.border = "none";
+            blue.style.border = "none";
+            purple.style.border = "none";
+            index = null;
+        }
+
+
+
+
+        function cervena()
+        {
+            red.style.opacity = 1;
+        }
+
+        function cervena_click(){
+            if (index != "rot")
+            {
+                zaklad_click();
+                red.style.border = "inset";
+                index = "rot";
+                zaklad();
+                colorInput.value = index;
+            }
+            else
+            {
+                red.style.border = "none";
+                index = null;
+                colorInput.value = index;
+            }
+        }
+
+
+        function pomarancova(){
+            orange.style.opacity = 1;
+        }
+
+        function pomarancova_click(){
+            if (index != "orange")
+            {
+                zaklad_click();
+                orange.style.border = "inset";
+                index = "orange";
+                zaklad();
+                colorInput.value = index;
+            }
+            else
+            {
+                orange.style.border = "none";
+                index = null;
+                colorInput.value = index;
+            }
+        }
+
+        function zlta(){
+            yellow.style.opacity = 1;
+        }
+
+
+        function zlta_click(){
+            if (index != "gelb")
+            {
+                zaklad_click();
+                yellow.style.border = "inset";
+                index = "gelb"
+                zaklad();
+                colorInput.value = index;
+            }
+            else
+            {
+                yellow.style.border = "none";
+                index = null;
+                colorInput.value = index;
+            }
+        }
+
+
+        function zelena(){
+            green.style.opacity = 1;
+        }
+
+        function zelena_click(){
+            if (index != "grün")
+            {
+                zaklad_click();
+                green.style.border = "inset";
+                index = "grün";
+                zaklad();
+                colorInput.value = index;
+            }
+            else
+            {
+                green.style.border = "none";
+                index = null;
+                colorInput.value = index;
+            }
+
+
+        }
+
+
+        function modra(){
+            blue.style.opacity = 1;
+        }
+
+        function modra_click(){
+            if (index != "blau")
+            {
+                zaklad_click();
+                blue.style.border = "inset";
+                index = "blau";
+                zaklad();
+                colorInput.value = index;
+            }
+            else
+            {
+                blue.style.border = "none";
+                index = null;
+                colorInput.value = index;
+            }
+
+        }
+
+        function fialova(){
+            purple.style.opacity = 1;
+        }
+
+        function fialova_click(){
+            if (index != "violett")
+            {
+                zaklad_click();
+                purple.style.border = "inset";
+                index = "violett";
+                zaklad();
+                colorInput.value = index;
+            }
+            else
+            {
+                purple.style.border = "none";
+                index = null;
+                colorInput.value = index;
+            }
+
+        }
+
+        red.addEventListener('mouseover', cervena);
+        red.addEventListener('click', cervena_click)
+        red.addEventListener('mouseout', zaklad);
+
+        orange.addEventListener('mouseover', pomarancova);
+        orange.addEventListener('click', pomarancova_click);
+        orange.addEventListener('mouseout', zaklad);
+
+        yellow.addEventListener('mouseover', zlta);
+        yellow.addEventListener('click', zlta_click);
+        yellow.addEventListener('mouseout', zaklad);
+
+        green.addEventListener('mouseover', zelena);
+        green.addEventListener('click', zelena_click)
+        green.addEventListener('mouseout', zaklad);
+
+        blue.addEventListener('mouseover', modra);
+        blue.addEventListener('click', modra_click)
+        blue.addEventListener('mouseout', zaklad);
+
+        purple.addEventListener('mouseover', fialova);
+        purple.addEventListener('click', fialova_click)
+        purple.addEventListener('mouseout', zaklad);
+
+        let colorInput = document.querySelector("#color-inp")
+        let submit = document.querySelector("#submit")
+
+        submit.addEventListener('click', () => {
+            colorInput.value = index;
+        });
+
+
+    </script>
+
+
+        </main>
+
+        <!--
+        <footer class="mb-5 small text-center text-muted">
+            Made By the one and only Simon Geno
+        </footer>
+        -->
+    </body>
+
+</html>

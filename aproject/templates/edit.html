@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" rel="stylesheet">
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
+
+    <link href="/static/styles.css" rel="stylesheet">
+    <script src="/static/script.js" defer></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+    <title>Disciplined: Edit Habit</title>
+    <link rel="icon" href="https://w7.pngwing.com/pngs/32/493/png-transparent-muscle-emoji-emoji-biceps-human-skin-color-muscle-arm-hand-orange-people.png" type="image/x-icon">
+
+    <style>
+
+        .navig-bar{
+            position:fixed;
+            top: 0;
+
+        }
+
+        .content {
+            margin-top: 60px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <nav class=" avbar navbar-expand-md navbar-light navig-bar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Disciplined</a>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+
+<br id="new_habit">
+
+<div style="background-color:rgb(100,100,100); align-items: center;">
+    <h2 > Edit Habit </h2>
+    <form action="/edit" method="get">
+        <input name="habit-id" id="habit-id" type="hidden" value="{{habit_id}}">
+        <div style="margin: 40px;"> Name <input id="habit-name" name="habit-name" type="text" autocomplete="off" placeholder="Name of the Habit" style="width:300px;" maxlength="50" value="{{habit_name}}"> </div>
+        <div style="margin: 40px;"> <input id="color" name="color" type="hidden" value="{{color}}"> </div>
+        <div style="margin: 40px;"> Description <textarea id="description" name="description" maxlength="200" placeholder="Add Description" type="text" autocomplete="off" style=" width: 200px; height: 100px; resize: none;">{{habit_description}}</textarea> </div>
+
+        <div style=" background-color:rgb(240,240,240); position:relative; z-index:0; margin:40px; width:200px; height: 150px;">
+            <div style="position:absolute;">
+                <div id="red-button" style="background-color:rgb(255,0,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- RED --> </div>
+                <div id="orange-button" style="background-color:rgb(255,160,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- ORANGE --></div>
+            </div>
+            <div style="position:absolute; left:60px;">
+                <div id="yellow-button"  style="background-color:rgb(255,255,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- YELLOW --></div>
+                <div id="green-button" style="background-color:rgb(0,255,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- GREEN --></div>
+            </div>
+            <div style="position:absolute; left:120px;">
+                <div id="blue-button"  style="background-color:rgb(0,0,255); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- BLUE --></div>
+                <div id="purple-button"  style="background-color:rgb(255,0,255); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- PURPLE --></div>
+            </div>
+        </div>
+
+        <div style="position: relative;">
+            <input name="start_month" id="start_month" type="hidden" value="{{start_month}}">
+            <input name="start_day" id="start_day" type="hidden" value="{{start_day}}" >
+            <input name="start_year" id="start_year" type="hidden" value="{{start_year}}">
+            <div> Optionally, choose the end of your habit </div>
+
+            {% if ende_year == "2103" and ende_month == "2" and ende_day == "14" %}
+                <input name="ende_month" id="ende_month" autocomplete="off" placeholder="month" type="number" min="1" max="12" oninput="validity.valid||(value='')">
+                <input name="ende_day" id="ende_day" autocomplete="off" placeholder="day" type="number" min="1" max="31" oninput="validity.valid||(value='')">
+                <input name="ende_year" id="ende_year" autocomplete="off" placeholder="year" type="number">
+            {% else %}
+                <input name="ende_month" id="ende_month" autocomplete="off" placeholder="month" type="number" value="{{ende_month}}" min="1" max="12" oninput="validity.valid||(value='')">
+                <input name="ende_day" id="ende_day" autocomplete="off" placeholder="day" type="number" value="{{ende_day}}" min="1" max="31" oninput="validity.valid||(value='')">
+                <input name="ende_year" id="ende_year" autocomplete="off" placeholder="year" type="number" value="{{ende_year}}">
+            {% endif %}
+        </div>
+        <div style="margin: 40px; "> <button id="submit" type="submit"> Save Changes </button> </div>
+
+
+    </form>
+
+</div>
+
+<br><br>
+
+
+<script>
+
+
+    let descField = document.querySelector("#description");
+
+    function vyska(dField){
+        if (100 < dField.scrollHeight)
+        {
+            dField.style.height = dField.scrollHeight + "px";
+        }
+
+    };
+
+    descField.addEventListener('input', () => {
+        vyska(descField);
+    });
+
+
+
+    let index = null;
+    let defindex = document.querySelector("#color").value;
+
+    let red = document.querySelector("#red-button");
+    let orange = document.querySelector("#orange-button");
+    let yellow = document.querySelector("#yellow-button");
+    let green = document.querySelector("#green-button");
+    let blue = document.querySelector("#blue-button");
+    let purple = document.querySelector("#purple-button");
+
+
+
+    function zaklad(){
+        if (index != "rot")
+        red.style.opacity = 0.3;
+        if (index != "orange")
+        orange.style.opacity = 0.3;
+        if (index != "gelb")
+        yellow.style.opacity = 0.3;
+        if (index != "grün")
+        green.style.opacity = 0.3;
+        if (index != "blau")
+        blue.style.opacity = 0.3;
+        if (index != "violett")
+        purple.style.opacity = 0.3;
+    }
+
+    function zaklad_click(){
+        red.style.border = "none";
+        orange.style.border = "none";
+        yellow.style.border = "none";
+        green.style.border = "none";
+        blue.style.border = "none";
+        purple.style.border = "none";
+        index = null;
+    }
+
+
+
+
+    function cervena()
+    {
+        red.style.opacity = 1;
+    }
+
+    function cervena_click(){
+        if (index != "rot")
+        {
+            zaklad_click();
+            red.style.border = "inset";
+            index = "rot";
+            zaklad();
+            colorInput.value = index;
+        }
+        else
+        {
+            red.style.border = "none";
+            index = null;
+            colorInput.value = defindex;
+        }
+    }
+
+
+    function pomarancova(){
+        orange.style.opacity = 1;
+    }
+
+    function pomarancova_click(){
+        if (index != "orange")
+        {
+            zaklad_click();
+            orange.style.border = "inset";
+            index = "orange";
+            zaklad();
+            colorInput.value = index;
+        }
+        else
+        {
+            orange.style.border = "none";
+            index = null;
+            colorInput.value = defindex;
+        }
+    }
+
+    function zlta(){
+        yellow.style.opacity = 1;
+    }
+
+
+    function zlta_click(){
+        if (index != "gelb")
+        {
+            zaklad_click();
+            yellow.style.border = "inset";
+            index = "gelb"
+            zaklad();
+            colorInput.value = index;
+        }
+        else
+        {
+            yellow.style.border = "none";
+            index = null;
+            colorInput.value = defindex;
+        }
+    }
+
+
+    function zelena(){
+        green.style.opacity = 1;
+    }
+
+    function zelena_click(){
+        if (index != "grün")
+        {
+            zaklad_click();
+            green.style.border = "inset";
+            index = "grün";
+            zaklad();
+            colorInput.value = index;
+        }
+        else
+        {
+            green.style.border = "none";
+            index = null;
+            colorInput.value = defindex;
+        }
+
+
+    }
+
+
+    function modra(){
+        blue.style.opacity = 1;
+    }
+
+    function modra_click(){
+        if (index != "blau")
+        {
+            zaklad_click();
+            blue.style.border = "inset";
+            index = "blau";
+            zaklad();
+            colorInput.value = index;
+        }
+        else
+        {
+            blue.style.border = "none";
+            index = null;
+            colorInput.value = defindex;
+        }
+
+    }
+
+    function fialova(){
+        purple.style.opacity = 1;
+    }
+
+    function fialova_click(){
+        if (index != "violett")
+        {
+            zaklad_click();
+            purple.style.border = "inset";
+            index = "violett";
+            zaklad();
+            colorInput.value = index;
+        }
+        else
+        {
+            purple.style.border = "none";
+            index = null;
+            colorInput.value = defindex;
+        }
+
+    }
+
+    function zaciatok(defindex){
+        if (defindex == "rot"){
+            cervena_click();
+            red.style.opacity = 1;
+        }
+        else if (defindex == "orange"){
+            pomarancova_click();
+            orange.style.opacity = 1;
+        }
+        else if(defindex == "gelb"){
+            zlta_click();
+            yellow.style.opacity = 1;
+        }
+        else if (defindex == "grün"){
+            zelena_click();
+            green.style.opacity = 1;
+        }
+        else if (defindex == "blau"){
+            modra_click();
+            blue.style.opacity = 1;
+        }
+        else if (defindex == "violett"){
+            fialova_click();
+            purple.style.opacity = 1;
+        }
+    };
+
+    window.addEventListener('load', () => {
+        zaciatok(defindex);
+    });
+
+    red.addEventListener('mouseover', cervena);
+    red.addEventListener('click', cervena_click)
+    red.addEventListener('mouseout', zaklad);
+
+    orange.addEventListener('mouseover', pomarancova);
+    orange.addEventListener('click', pomarancova_click);
+    orange.addEventListener('mouseout', zaklad);
+
+    yellow.addEventListener('mouseover', zlta);
+    yellow.addEventListener('click', zlta_click);
+    yellow.addEventListener('mouseout', zaklad);
+
+    green.addEventListener('mouseover', zelena);
+    green.addEventListener('click', zelena_click)
+    green.addEventListener('mouseout', zaklad);
+
+    blue.addEventListener('mouseover', modra);
+    blue.addEventListener('click', modra_click)
+    blue.addEventListener('mouseout', zaklad);
+
+    purple.addEventListener('mouseover', fialova);
+    purple.addEventListener('click', fialova_click)
+    purple.addEventListener('mouseout', zaklad);
+
+    let colorInput = document.querySelector("#color")
+    let submit = document.querySelector("#submit")
+
+    submit.addEventListener('click', () => {
+        colorInput.value = index;
+    });
+
+</script>
+
+
+        </main>
+
+        <!--
+        <footer class="mb-5 small text-center text-muted">
+            Made By the one and only Simon Geno
+        </footer>
+        -->
+    </body>
+
+</html>

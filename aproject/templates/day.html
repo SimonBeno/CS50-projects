@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" rel="stylesheet">
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
+
+    <link href="/static/styles.css" rel="stylesheet">
+    <script src="/static/script.js" defer></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+    <title>Disciplined: Day</title>
+    <link rel="icon" href="https://w7.pngwing.com/pngs/32/493/png-transparent-muscle-emoji-emoji-biceps-human-skin-color-muscle-arm-hand-orange-people.png" type="image/x-icon">
+
+    <style>
+
+        .navig-bar{
+            position:fixed;
+            top: 0;
+
+        }
+
+        .content {
+            margin-top: 60px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="navig-bar" style="z-index:100; background-color:#ffffff; width:100%;">
+    <nav class=" navbar navbar-expand-md navbar-light ">
+        <div class="container-fluid ">
+            <a class="navbar-brand" href="/">Disciplined</a>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <ul class="navbar-nav ms-auto mt-2">
+                <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+    {% if get_flashed_messages() %}
+        <header>
+            <div class="alert alert-primary mb-0 text-center" role="alert">
+                {{ get_flashed_messages() | join(" ") }}
+            </div>
+        </header>
+    {% endif %}
+
+    <main class="container-fluid py-5 text-center">
+
+<style>
+    body {
+        background-color:rgb(200,200,255)
+
+    }
+
+</style>
+
+    <div style="margin:60px; position:absolute; ">
+        den c. {{ mesiac }}/{{ den }}/{{ rok }}
+    </div>
+    <div style="margin:60px;"> <!--  vsetky habits  -->
+
+        {% for habit in habits %}
+        <div> <!--  jeden habit *** -->
+
+            <h1> <!--  habit name  -->
+
+                {{ habit.name }}
+
+            </h1>
+
+            <div> <!-- to save one habit -->
+                <form id="save-form" method="POST">
+                    <input id="month" name="month" type="hidden" value="{{ mesiac }}">
+                    <input id="day" name="day" type="hidden" value="{{ den }}">
+                    <input id="year" name="year" type="hidden" value="{{ rok }}">
+                    <div style="margin:50px;"> <input id="habit_id" name="habit_id" type="hidden" value="{{ habit.id }}"> </div>
+
+                    <div style="position:relative; left:400px; top:-40px;">
+
+                        <div class="square-container" style="position:absolute; left:0px; top:5px; z-index:1;">
+                            <div  class="square"  style="color:rgb(0,0,0); background-color:rgb(255,255,255)" data-number="1"></div>
+                            <div  class="square" style="color:rgb(28,28,28); background-color:rgb(224,224,224);" data-number="2"></div>
+                            <div  class="square" style="color:rgb(56,56,56); background-color:rgb(196,196,196);" data-number="3"></div>
+                            <div  class="square" style="color:rgb(84,84,84); background-color:rgb(168,168,168);" data-number="4"></div>
+                            <div  class="square" style="color:rgb(112,112,112); background-color:rgb(140,140,140);" data-number="5"></div>
+                            <div  class="square" style="color:rgb(140,140,140); background-color:rgb(112,112,112);" data-number="6"></div>
+                            <div  class="square" style="color:rgb(168,168,168); background-color:rgb(84,84,84);" data-number="7"></div>
+                            <div  class="square" style="color:rgb(196,196,196); background-color:rgb(56,56,56);" data-number="8"></div>
+                            <div  class="square" style="color:rgb(224,224,224); background-color:rgb(28,28,28);" data-number="9"></div>
+                            <div  class="square" style="color:rgb(255,255,255); background-color:rgb(0,0,0);" data-number="10"></div>
+                        </div>
+                        <div class="square-container" id="eval_scale" style="position:absolute; left:0px; top:5px; z-index:2;" >
+                            <input type="hidden" id="color" value="{{ habit.color }}">
+                            <input type="hidden" name="evaluation" id="evaluation" value="{{ habit.evaluation }}" >
+                            <div id="jeden" class="square" style="opacity:0;" data-number="1"></div>
+                            <div id="dva" class="square" style="opacity:0;" data-number="2"></div>
+                            <div id="tri" class="square" style="opacity:0;" data-number="3"></div>
+                            <div id="styri" class="square" style="opacity:0;" data-number="4"></div>
+                            <div id="pat" class="square" style="opacity:0;" data-number="5"></div>
+                            <div id="sest" class="square" style="opacity:0;" data-number="6"></div>
+                            <div id="sedem" class="square" style="opacity:0;" data-number="7"></div>
+                            <div id="osem" class="square" style="opacity:0;" data-number="8"></div>
+                            <div id="devat" class="square" style="opacity:0;" data-number="9"></div>
+                            <div id="desat" class="square" style="opacity:0;" data-number="10"></div>
+                        </div>
+                    </div>
+
+                    <div> <!--  notes  -->
+                        <textarea id="notes" name="notes" maxlength="400" placeholder="Add Notes" type="text" autocomplete="off" style=" width: 300px; height:200px; resize: none; margin:30px;" oninput='this.style.height = 200px; this.style.height = this.scrollHeight + "px"' >{% if habit.pozn %}{{habit.pozn}}{% endif %}</textarea>
+                    </div>
+                    <button id="submit" name="submit" type="submit"> Save </button>
+                </form>
+
+            </div>
+
+        </div> <!-- *** -->
+
+        <br><br>
+        
+        {% endfor %}
+
+        <script>
+
+            window.addEventListener('load', () => {
+
+
+            const evaluationScales = document.querySelectorAll("#eval_scale");
+
+
+            evaluationScales.forEach(skala => {
+
+
+            let color = skala.querySelector("#color").value;
+            let evaluation_inp = skala.querySelector("#evaluation");
+
+            let jeden = skala.querySelector("#jeden");
+            let dva = skala.querySelector("#dva");
+            let tri = skala.querySelector("#tri");
+            let styri = skala.querySelector("#styri");
+            let pat = skala.querySelector("#pat");
+            let sest = skala.querySelector("#sest");
+            let sedem = skala.querySelector("#sedem");
+            let osem = skala.querySelector("#osem");
+            let devat = skala.querySelector("#devat");
+            let desat = skala.querySelector("#desat");
+
+
+            function clearf(){
+                jeden.style.opacity = 0;
+                dva.style.opacity = 0;
+                dva.style.opacity = 0;
+                tri.style.opacity = 0;
+                styri.style.opacity = 0;
+                pat.style.opacity = 0;
+                sest.style.opacity = 0;
+                sedem.style.opacity = 0;
+                osem.style.opacity = 0;
+                devat.style.opacity = 0;
+                desat.style.opacity = 0;
+            };
+
+            function jednotka()
+            {
+                clearf();
+                jeden.classList.add(color);
+                jeden.style.opacity = 0.1;
+            };
+
+            function dvojka()
+            {
+                jednotka();
+                dva.classList.add(color);
+                dva.style.opacity = 0.2;
+            };
+
+            function trojka(){
+                dvojka();
+                tri.classList.add(color);
+                tri.style.opacity = 0.3;
+            };
+
+            function stvorka(){
+                trojka();
+                styri.classList.add(color);
+                styri.style.opacity = 0.4;
+            };
+
+            function patka(){
+                stvorka();
+                pat.classList.add(color);
+                pat.style.opacity = 0.5;
+            };
+
+            function sestka(){
+                patka();
+                sest.classList.add(color);
+                sest.style.opacity = 0.6;
+            };
+
+            function sedmicka(){
+                sestka();
+                sedem.classList.add(color);
+                sedem.style.opacity = 0.7;
+            };
+
+            function osmicka(){
+                sedmicka();
+                osem.classList.add(color);
+                osem.style.opacity = 0.8;
+            };
+
+            function devina(){
+                osmicka();
+                devat.classList.add(color);
+                devat.style.opacity = 0.9;
+            };
+
+            function desina(){
+                devina();
+                desat.classList.add(color);
+                desat.style.opacity = 1;
+            };
+
+
+            function zaciatok(evaluation_inp){
+                if (evaluation_inp.value == 1){
+                    jednotka();
+                }
+                else if (evaluation_inp.value == 2){
+                    dvojka();
+                }
+                else if (evaluation_inp.value == 3){
+                    trojka();
+                }
+                else if (evaluation_inp.value == 4){
+                    stvorka;
+                }
+                else if (evaluation_inp.value == 5){
+                    patka();
+                }
+                else if (evaluation_inp.value == 6){
+                    sestka();
+                }
+                else if (evaluation_inp.value == 7){
+                    sedmicka();
+                }
+                else if (evaluation_inp.value == 8){
+                    osmicka();
+                }
+                else if (evaluation_inp.value == 9){
+                    devina();
+                }
+                else if (evaluation_inp.value == 10){
+                    desina();
+                }
+            };
+
+            jeden.addEventListener('click', () => {
+                evaluation_inp.value = 1;
+                jednotka();
+            });
+
+            dva.addEventListener('click', () => {
+                evaluation_inp.value = 2;
+                dvojka();
+            });
+
+
+            tri.addEventListener('click', () => {
+                evaluation_inp.value = 3;
+                trojka();
+            });
+
+
+            styri.addEventListener('click', () => {
+                evaluation_inp.value = 4;
+                stvorka();
+            });
+
+
+            pat.addEventListener('click', () => {
+                evaluation_inp.value = 5;
+                patka();
+            });
+
+
+            sest.addEventListener('click', () => {
+                evaluation_inp.value = 6;
+                sestka();
+            });
+
+
+            sedem.addEventListener('click', () => {
+                evaluation_inp.value = 7;
+                sedmicka();
+            });
+
+
+            osem.addEventListener('click', () => {
+                evaluation_inp.value = 8;
+                osmicka();
+            });
+
+
+            devat.addEventListener('click', () => {
+                evaluation_inp.value = 9;
+                devina();
+            });
+
+
+            desat.addEventListener('click', () => {
+                evaluation_inp.value = 10;
+                desina();
+            });
+
+            console.log(evaluation_inp.value);
+            zaciatok(evaluation_inp);
+
+            });
+
+        });
+
+
+            </script>
+
+    </div>
+
+
+</body>
+
+</html>

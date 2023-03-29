@@ -1,0 +1,176 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+
+<style>
+    body {
+      background-image: url('https://www.wsav.com/wp-content/uploads/sites/75/2016/02/dark-storm-clouds_38851951_ver1.0.jpg');
+    }
+    </style>
+
+<div id="signin_field" style="padding:3%; position:absolute; top:150px; left:555px; border-style:solid; border-width:thin; border-color:rgb(100,100,100); border-radius:10%; display: none; backdrop-filter: blur(10px)">
+    <button id="krizik" style="position:relative; top:-30px; left:140px;"> X </button>
+    <form action="/login" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+        </div>
+        <div> Don't have an account yet? <a href="/register"> Register! </a> </div>
+        <br>
+        <button id="log-in" class="btn btn-primary" type="submit" disabled="true">Log In</button>
+    </form>
+</div>
+
+<div id="uputavka" style="display:block;">
+    <div style="font-size:80px;">
+
+        Make new habits <br> that will make new you
+
+    </div>
+    <div style="font-size:25px; position:relative; top:20px;">
+
+        Disciplined let's you <br> develop, track and maintain habits <br> that will lead to your ultimate success
+
+    </div>
+
+    <div style="margin: 40px;">
+        <button id="signin"> Los geht's! </button>
+    </div>
+</div>
+
+<script>
+
+    let signin = document.querySelector("#signin");
+    let krizik = document.querySelector("#krizik");
+
+    let field = document.querySelector("#signin_field");
+    let uputavka = document.querySelector("#uputavka");
+
+    let condition1; /* checks if username has input */
+    let condition2; /* checks if password has input */
+
+    let login = document.querySelector("#log-in")
+    let username = document.querySelector("#username")
+    let password = document.querySelector("#password")
+
+
+    signin.addEventListener('click', () => {
+        if (field.style.display == "none")
+        {
+            field.style.display = "block";
+        }
+        else
+            field.style.display = "none";
+
+        if (uputavka.style.display == "block")
+        {
+            uputavka.style.display = "none";
+        }
+        else
+        {
+            uputavka.style.display = "block";
+        }
+    });
+
+
+    krizik.addEventListener('click', () => {
+        if (field.style.display == "none")
+        {
+            field.style.display = "block";
+        }
+        else
+        {
+            field.style.display = "none";
+            username.value = "";
+            password.value = "";
+        }
+
+        if (uputavka.style.display == "block")
+        {
+            uputavka.style.display = "none";
+        }
+        else
+        {
+            uputavka.style.display = "block";
+        }
+    });
+
+
+
+
+
+
+
+    username.addEventListener('keyup',(event) => {
+        if (username.value.length > 0)
+        {
+            condition1 = true;
+
+            if ((condition1 == true) && (condition2 == true))
+            {
+                login.disabled = false;
+            }
+            else
+            {
+                login.disabled = true;
+            }
+
+        }
+        else
+        {
+                condition1 = false;
+
+                if ((condition1 == true) && (condition2 == true))
+                {
+                    login.disabled = false;
+                }
+                else
+                {
+                    login.disabled = true;
+                }
+        }
+    });
+
+
+    password.addEventListener('keyup',(event) => {
+        if (password.value.length > 0)
+        {
+            condition2 = true;
+
+            if ((condition1 == true) && (condition2 == true))
+            {
+                login.disabled = false;
+            }
+            else
+            {
+                login.disabled = true;
+            }
+
+        }
+        else
+        {
+            condition2 = false;
+
+            if ((condition1 == true) && (condition2 == true))
+            {
+                login.disabled = false;
+            }
+            else
+            {
+                login.disabled = true;
+            }
+        }
+
+    });
+
+
+
+
+</script>
+{% endblock %}
