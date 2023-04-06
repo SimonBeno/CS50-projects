@@ -13,6 +13,16 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 
+    <!--  TailWind&DaisyUI  -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
+
+    <!--   Bootstrap   -->
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" rel="stylesheet">
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
+    <link href="/static/styles.css" rel="stylesheet">
+
+
     <title>Disciplined: Day</title>
     <link rel="icon" href="https://w7.pngwing.com/pngs/32/493/png-transparent-muscle-emoji-emoji-biceps-human-skin-color-muscle-arm-hand-orange-people.png" type="image/x-icon">
 
@@ -34,16 +44,63 @@
 
 <body>
 
-<div class="navig-bar" style="z-index:100; background-color:#ffffff; width:100%;">
+
+{% if hashsymbol %}
+<input id="hashsymbol" type="hidden" value="{{ hashsymbol }}" >
+{% else %}
+<input id="hashsymbol" type="hidden" value="" >
+{% endif %}
+
+<script>
+
+    let hashsymbol = document.querySelector("#hashsymbol");
+
+    if (hashsymbol.value){
+
+        let habit_id = hashsymbol.value;
+        let oldUrl = window.location.href;
+        if (oldUrl.includes('#'))
+        {
+
+            // loop through the string from the end until we find a hash symbol
+            for (let i = oldUrl.length - 1; i >= 0; i--)
+            {
+                if (oldUrl[i] === '#')
+                {
+                    oldUrl = oldUrl.slice(0, -1);
+                    break;
+                }
+
+                else
+                {
+                // if we haven't found a hash symbol yet, remove the last character of the string
+                oldUrl = oldUrl.slice(0, -1);
+                }
+            }
+
+
+        }
+
+        const newUrl = oldUrl + '#' + habit_id
+        window.location.replace(newUrl);
+    };
+
+</script>
+
+
+<div class="navig-bar" style="z-index:100; background-color:#ffffff; width:100%; ">
+    <div class="bg-navbar-img"></div>
     <nav class=" navbar navbar-expand-md navbar-light ">
         <div class="container-fluid ">
             <a class="navbar-brand" href="/">Disciplined</a>
             <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <ul class="navbar-nav ms-auto mt-2">
-                <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
-            </ul>
+            <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav ms-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                    </ul>
+            </div>
         </div>
     </nav>
 </div>
@@ -60,18 +117,44 @@
 
 <style>
     body {
-        background-color:rgb(200,200,255)
+        background-color:rgb(129,146,163)
 
     }
 
 </style>
+    <input id="monat" type="hidden" value="{{mesiac}}">
+    <input id="tag" type="hidden" value="{{den}}">
+    <input id="jahr" type="hidden" value="{{rok}}">
 
-    <div style="margin:60px; position:absolute; ">
-        den c. {{ mesiac }}/{{ den }}/{{ rok }}
-    </div>
-    <div style="margin:60px;"> <!--  vsetky habits  -->
+    <h4 style="margin:60px; position:absolute; ">
+         <span id="date"></span>, {{ mesiac }}/{{ den }}/{{ rok }}
+    </h4>
+    <script>
+        let month = document.querySelector("#monat").value;
+        let day = document.querySelector("#tag").value;
+        let year = document.querySelector("#jahr").value;
+
+        function getDayName(month, day, year) {
+            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const date = new Date(year, month - 1, day);
+            const dayOfWeekIndex = date.getDay();
+            const dayName = daysOfWeek[dayOfWeekIndex];
+            return dayName;
+        }
+
+        let dayName = getDayName(month, day, year);
+
+        let dateDiv = document.querySelector("#date");
+        dateDiv.innerHTML = dayName;
+
+    </script>
+    {% if future_travel == 0 %}
+    {% if habits %}
+    <div style="margin:60px;"> <!--  vsetky habits / hash mark -->
 
         {% for habit in habits %}
+        {% if dayIndex|string in habit.weekdays %}
+        <br id="{{habit.id}}" >
         <div> <!--  jeden habit *** -->
 
             <h1> <!--  habit name  -->
@@ -80,28 +163,29 @@
 
             </h1>
 
-            <div> <!-- to save one habit -->
-                <form id="save-form" method="POST">
+            <div id="habit-div"> <!-- to save one habit -->
+                <form  id="save-form" method="POST">
+                <input type="hidden" name="action" value="edit_day">
                     <input id="month" name="month" type="hidden" value="{{ mesiac }}">
                     <input id="day" name="day" type="hidden" value="{{ den }}">
                     <input id="year" name="year" type="hidden" value="{{ rok }}">
                     <div style="margin:50px;"> <input id="habit_id" name="habit_id" type="hidden" value="{{ habit.id }}"> </div>
 
-                    <div style="position:relative; left:400px; top:-40px;">
+                    <div id="eval_scale" style="position:relative; left:400px; top:-40px; width:50px;">
 
-                        <div class="square-container" style="position:absolute; left:0px; top:5px; z-index:1;">
-                            <div  class="square"  style="color:rgb(0,0,0); background-color:rgb(255,255,255)" data-number="1"></div>
-                            <div  class="square" style="color:rgb(28,28,28); background-color:rgb(224,224,224);" data-number="2"></div>
-                            <div  class="square" style="color:rgb(56,56,56); background-color:rgb(196,196,196);" data-number="3"></div>
-                            <div  class="square" style="color:rgb(84,84,84); background-color:rgb(168,168,168);" data-number="4"></div>
-                            <div  class="square" style="color:rgb(112,112,112); background-color:rgb(140,140,140);" data-number="5"></div>
-                            <div  class="square" style="color:rgb(140,140,140); background-color:rgb(112,112,112);" data-number="6"></div>
-                            <div  class="square" style="color:rgb(168,168,168); background-color:rgb(84,84,84);" data-number="7"></div>
-                            <div  class="square" style="color:rgb(196,196,196); background-color:rgb(56,56,56);" data-number="8"></div>
-                            <div  class="square" style="color:rgb(224,224,224); background-color:rgb(28,28,28);" data-number="9"></div>
-                            <div  class="square" style="color:rgb(255,255,255); background-color:rgb(0,0,0);" data-number="10"></div>
+                        <div class="square-container" style="position:absolute; left:0px; top:5px; z-index:1; width:500px;">
+                            <div id="uno"  class="square"  style="color:rgb(0,0,0); background-color:rgb(255,255,255); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin; " data-number="1"></div>
+                            <div id="dos" class="square" style="color:rgb(28,28,28); background-color:rgb(224,224,224); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin;" data-number="2"></div>
+                            <div id="tres" class="square" style="color:rgb(56,56,56); background-color:rgb(196,196,196); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin;" data-number="3"></div>
+                            <div id="cuatro" class="square" style="color:rgb(84,84,84); background-color:rgb(168,168,168); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin;" data-number="4"></div>
+                            <div id="cinco" class="square" style="color:rgb(112,112,112); background-color:rgb(140,140,140); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin;" data-number="5"></div>
+                            <div id="seis" class="square" style="color:rgb(140,140,140); background-color:rgb(112,112,112); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin;" data-number="6"></div>
+                            <div id="siete" class="square" style="color:rgb(168,168,168); background-color:rgb(84,84,84); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin;" data-number="7"></div>
+                            <div id="ocho" class="square" style="color:rgb(196,196,196); background-color:rgb(56,56,56); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin;" data-number="8"></div>
+                            <div id="nueve" class="square" style="color:rgb(224,224,224); background-color:rgb(28,28,28); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin;" data-number="9"></div>
+                            <div id="diez" class="square" style="color:rgb(255,255,255); background-color:rgb(0,0,0); border-style:solid; border-color:rgba(50,50,50,0.5); border-width:thin;" data-number="10"></div>
                         </div>
-                        <div class="square-container" id="eval_scale" style="position:absolute; left:0px; top:5px; z-index:2;" >
+                        <div class="square-container" style="position:absolute; left:0px; top:5px; z-index:2; width:500px;" >
                             <input type="hidden" id="color" value="{{ habit.color }}">
                             <input type="hidden" name="evaluation" id="evaluation" value="{{ habit.evaluation }}" >
                             <div id="jeden" class="square" style="opacity:0;" data-number="1"></div>
@@ -115,229 +199,459 @@
                             <div id="devat" class="square" style="opacity:0;" data-number="9"></div>
                             <div id="desat" class="square" style="opacity:0;" data-number="10"></div>
                         </div>
+
                     </div>
 
                     <div> <!--  notes  -->
-                        <textarea id="notes" name="notes" maxlength="400" placeholder="Add Notes" type="text" autocomplete="off" style=" width: 300px; height:200px; resize: none; margin:30px;" oninput='this.style.height = 200px; this.style.height = this.scrollHeight + "px"' >{% if habit.pozn %}{{habit.pozn}}{% endif %}</textarea>
+                        <textarea id="notes" name="notes" maxlength="400" placeholder="Add Notes" type="text" autocomplete="off" class="input mt-10" style=" width: 300px; height:200px; resize: none;" oninput='this.style.height = 200px; this.style.height = this.scrollHeight + "px"' >{% if habit.pozn %}{{habit.pozn}}{% endif %}</textarea>
                     </div>
-                    <button id="submit" name="submit" type="submit"> Save </button>
+                    <button id="submit" name="submit" type="submit" class="glass text-xl mt-4" disabled="on"> Save </button>
                 </form>
-
+                <div style="position:relative; top:-40px;">
+                    <form id="delete_record" method="POST">
+                    <input type="hidden" name="action" value="delete_record">
+                        <div style="margin:50px;"> <input id="habit_id" name="habit_id" type="hidden" value="{{ habit.id }}"> </div>
+                        <button id="delete" name="delete" type="submit" class="glass text-xl mt-4"> Delete Record </button>
+                    </form>
+                </div>
             </div>
 
         </div> <!-- *** -->
 
-        <br><br>
-        
+        {% endif %}
         {% endfor %}
 
-        <script>
+<script>
 
-            window.addEventListener('load', () => {
+window.addEventListener('load', () => {
 
-
-            const evaluationScales = document.querySelectorAll("#eval_scale");
-
-
-            evaluationScales.forEach(skala => {
+    const evaluationScales = document.querySelectorAll("#eval_scale");
 
 
-            let color = skala.querySelector("#color").value;
-            let evaluation_inp = skala.querySelector("#evaluation");
+    evaluationScales.forEach(skala => {
 
-            let jeden = skala.querySelector("#jeden");
-            let dva = skala.querySelector("#dva");
-            let tri = skala.querySelector("#tri");
-            let styri = skala.querySelector("#styri");
-            let pat = skala.querySelector("#pat");
-            let sest = skala.querySelector("#sest");
-            let sedem = skala.querySelector("#sedem");
-            let osem = skala.querySelector("#osem");
-            let devat = skala.querySelector("#devat");
-            let desat = skala.querySelector("#desat");
+        let color = skala.querySelector("#color").value;
+        let evaluation_inp = skala.querySelector("#evaluation");
+
+        let jeden = skala.querySelector("#jeden");
+        let dva = skala.querySelector("#dva");
+        let tri = skala.querySelector("#tri");
+        let styri = skala.querySelector("#styri");
+        let pat = skala.querySelector("#pat");
+        let sest = skala.querySelector("#sest");
+        let sedem = skala.querySelector("#sedem");
+        let osem = skala.querySelector("#osem");
+        let devat = skala.querySelector("#devat");
+        let desat = skala.querySelector("#desat");
+        let uno = skala.querySelector("#uno");
+        let dos = skala.querySelector("#dos");
+        let tres = skala.querySelector("#tres");
+        let cuatro = skala.querySelector("#cuatro");
+        let cinco = skala.querySelector("#cinco");
+        let seis = skala.querySelector("#seis");
+        let siete = skala.querySelector("#siete");
+        let ocho = skala.querySelector("#ocho");
+        let nueve = skala.querySelector("#nueve");
+        let diez = skala.querySelector("#diez");
 
 
-            function clearf(){
-                jeden.style.opacity = 0;
-                dva.style.opacity = 0;
-                dva.style.opacity = 0;
-                tri.style.opacity = 0;
-                styri.style.opacity = 0;
-                pat.style.opacity = 0;
-                sest.style.opacity = 0;
-                sedem.style.opacity = 0;
-                osem.style.opacity = 0;
-                devat.style.opacity = 0;
-                desat.style.opacity = 0;
-            };
 
-            function jednotka()
-            {
-                clearf();
-                jeden.classList.add(color);
-                jeden.style.opacity = 0.1;
-            };
+        function clearf(){
+            jeden.style.opacity = 0;
+            dva.style.opacity = 0;
+            dva.style.opacity = 0;
+            tri.style.opacity = 0;
+            styri.style.opacity = 0;
+            pat.style.opacity = 0;
+            sest.style.opacity = 0;
+            sedem.style.opacity = 0;
+            osem.style.opacity = 0;
+            devat.style.opacity = 0;
+            desat.style.opacity = 0;
+            uno.style.backgroundColor = "rgb(255,255,255)";
+            dos.style.backgroundColor = "rgb(224,224,224)";
+            tres.style.backgroundColor = "rgb(196,196,196)";
+            cuatro.style.backgroundColor = "rgb(168,168,168)";
+            cinco.style.backgroundColor = "rgb(140,140,140)";
+            seis.style.backgroundColor = "rgb(112,112,112)";
+            siete.style.backgroundColor = "rgb(84,84,84)";
+            ocho.style.backgroundColor = "rgb(56,56,56)";
+            nueve.style.backgroundColor = "rgb(28,28,28)";
+            diez.style.backgroundColor = "rgb(0,0,0)";
+        };
 
-            function dvojka()
-            {
+        function jednotka()
+        {
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+        };
+
+        function dvojka()
+        {
+            jednotka();
+            /*
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+            */
+            dva.classList.add(color);
+            dva.style.opacity = 0.2;
+            dos.style.backgroundColor = "white";
+        };
+
+        function trojka(){
+            dvojka();
+            /*
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+            dva.classList.add(color);
+            dva.style.opacity = 0.2;
+            dos.style.backgroundColor = "white";
+            */
+            tri.classList.add(color);
+            tri.style.opacity = 0.3;
+            tres.style.backgroundColor = "white";
+        };
+
+        function stvorka(){
+            trojka();
+            /*
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+            dva.classList.add(color);
+            dva.style.opacity = 0.2;
+            dos.style.backgroundColor = "white";
+            tri.classList.add(color);
+            tri.style.opacity = 0.3;
+            tres.style.backgroundColor = "white";
+            */
+            styri.classList.add(color);
+            styri.style.opacity = 0.4;
+            cuatro.style.backgroundColor = "white";
+        };
+
+        function patka(){
+            stvorka();
+            /*
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+            dva.classList.add(color);
+            dva.style.opacity = 0.2;
+            dos.style.backgroundColor = "white";
+            tri.classList.add(color);
+            tri.style.opacity = 0.3;
+            tres.style.backgroundColor = "white";
+            styri.classList.add(color);
+            styri.style.opacity = 0.4;
+            cuatro.style.backgroundColor = "white";
+            */
+            pat.classList.add(color);
+            pat.style.opacity = 0.5;
+            cinco.style.backgroundColor = "white";
+        };
+
+        function sestka(){
+            patka();
+            /*
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+            dva.classList.add(color);
+            dva.style.opacity = 0.2;
+            dos.style.backgroundColor = "white";
+            tri.classList.add(color);
+            tri.style.opacity = 0.3;
+            tres.style.backgroundColor = "white";
+            styri.classList.add(color);
+            styri.style.opacity = 0.4;
+            cuatro.style.backgroundColor = "white";
+            pat.classList.add(color);
+            pat.style.opacity = 0.5;
+            cinco.style.backgroundColor = "white";
+            */
+            sest.classList.add(color);
+            sest.style.opacity = 0.6;
+            seis.style.backgroundColor = "white";
+        };
+
+        function sedmicka(){
+            sestka();
+            /*
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+            dva.classList.add(color);
+            dva.style.opacity = 0.2;
+            dos.style.backgroundColor = "white";
+            tri.classList.add(color);
+            tri.style.opacity = 0.3;
+            tres.style.backgroundColor = "white";
+            styri.classList.add(color);
+            styri.style.opacity = 0.4;
+            cuatro.style.backgroundColor = "white";
+            pat.classList.add(color);
+            pat.style.opacity = 0.5;
+            cinco.style.backgroundColor = "white";
+            sest.classList.add(color);
+            sest.style.opacity = 0.6;
+            seis.style.backgroundColor = "white";
+            */
+            sedem.classList.add(color);
+            sedem.style.opacity = 0.7;
+            siete.style.backgroundColor = "white";
+        };
+
+        function osmicka(){
+            sedmicka();
+            /*
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+            dva.classList.add(color);
+            dva.style.opacity = 0.2;
+            dos.style.backgroundColor = "white";
+            tri.classList.add(color);
+            tri.style.opacity = 0.3;
+            tres.style.backgroundColor = "white";
+            styri.classList.add(color);
+            styri.style.opacity = 0.4;
+            cuatro.style.backgroundColor = "white";
+            pat.classList.add(color);
+            pat.style.opacity = 0.5;
+            cinco.style.backgroundColor = "white";
+            sest.classList.add(color);
+            sest.style.opacity = 0.6;
+            seis.style.backgroundColor = "white";
+            sedem.classList.add(color);
+            sedem.style.opacity = 0.7;
+            siete.style.backgroundColor = "white";
+            */
+            osem.classList.add(color);
+            osem.style.opacity = 0.8;
+            ocho.style.backgroundColor = "white";
+        };
+
+        function devina(){
+            osmicka();
+            /*
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+            dva.classList.add(color);
+            dva.style.opacity = 0.2;
+            dos.style.backgroundColor = "white";
+            tri.classList.add(color);
+            tri.style.opacity = 0.3;
+            tres.style.backgroundColor = "white";
+            styri.classList.add(color);
+            styri.style.opacity = 0.4;
+            cuatro.style.backgroundColor = "white";
+            pat.classList.add(color);
+            pat.style.opacity = 0.5;
+            cinco.style.backgroundColor = "white";
+            sest.classList.add(color);
+            sest.style.opacity = 0.6;
+            seis.style.backgroundColor = "white";
+            sedem.classList.add(color);
+            sedem.style.opacity = 0.7;
+            siete.style.backgroundColor = "white";
+            osem.classList.add(color);
+            osem.style.opacity = 0.8;
+            ocho.style.backgroundColor = "white";
+            */
+            devat.classList.add(color);
+            devat.style.opacity = 0.9;
+            nueve.style.backgroundColor = "white";
+        };
+
+        function desina(){
+            devina();
+            /*
+            clearf();
+            jeden.classList.add(color);
+            jeden.style.opacity = 0.1;
+            uno.style.backgroundColor = "white";
+            dva.classList.add(color);
+            dva.style.opacity = 0.2;
+            dos.style.backgroundColor = "white";
+            tri.classList.add(color);
+            tri.style.opacity = 0.3;
+            tres.style.backgroundColor = "white";
+            styri.classList.add(color);
+            styri.style.opacity = 0.4;
+            cuatro.style.backgroundColor = "white";
+            pat.classList.add(color);
+            pat.style.opacity = 0.5;
+            cinco.style.backgroundColor = "white";
+            sest.classList.add(color);
+            sest.style.opacity = 0.6;
+            seis.style.backgroundColor = "white";
+            sedem.classList.add(color);
+            sedem.style.opacity = 0.7;
+            siete.style.backgroundColor = "white";
+            osem.classList.add(color);
+            osem.style.opacity = 0.8;
+            ocho.style.backgroundColor = "white";
+            devat.classList.add(color);
+            devat.style.opacity = 0.9;
+            nueve.style.backgroundColor = "white";
+            */
+            desat.classList.add(color);
+            desat.style.opacity = 1;
+            diez.style.backgroundColor = "white";
+        };
+
+
+        function zaciatok(evaluation_inp){
+            if (evaluation_inp.value == 1){
                 jednotka();
-                dva.classList.add(color);
-                dva.style.opacity = 0.2;
-            };
-
-            function trojka(){
+            }
+            else if (evaluation_inp.value == 2){
                 dvojka();
-                tri.classList.add(color);
-                tri.style.opacity = 0.3;
-            };
-
-            function stvorka(){
+            }
+            else if (evaluation_inp.value == 3){
                 trojka();
-                styri.classList.add(color);
-                styri.style.opacity = 0.4;
-            };
-
-            function patka(){
+            }
+            else if (evaluation_inp.value == 4){
                 stvorka();
-                pat.classList.add(color);
-                pat.style.opacity = 0.5;
-            };
-
-            function sestka(){
+            }
+            else if (evaluation_inp.value == 5){
                 patka();
-                sest.classList.add(color);
-                sest.style.opacity = 0.6;
-            };
-
-            function sedmicka(){
+            }
+            else if (evaluation_inp.value == 6){
                 sestka();
-                sedem.classList.add(color);
-                sedem.style.opacity = 0.7;
-            };
-
-            function osmicka(){
+            }
+            else if (evaluation_inp.value == 7){
                 sedmicka();
-                osem.classList.add(color);
-                osem.style.opacity = 0.8;
-            };
-
-            function devina(){
+            }
+            else if (evaluation_inp.value == 8){
                 osmicka();
-                devat.classList.add(color);
-                devat.style.opacity = 0.9;
-            };
-
-            function desina(){
+            }
+            else if (evaluation_inp.value == 9){
                 devina();
-                desat.classList.add(color);
-                desat.style.opacity = 1;
-            };
-
-
-            function zaciatok(evaluation_inp){
-                if (evaluation_inp.value == 1){
-                    jednotka();
-                }
-                else if (evaluation_inp.value == 2){
-                    dvojka();
-                }
-                else if (evaluation_inp.value == 3){
-                    trojka();
-                }
-                else if (evaluation_inp.value == 4){
-                    stvorka;
-                }
-                else if (evaluation_inp.value == 5){
-                    patka();
-                }
-                else if (evaluation_inp.value == 6){
-                    sestka();
-                }
-                else if (evaluation_inp.value == 7){
-                    sedmicka();
-                }
-                else if (evaluation_inp.value == 8){
-                    osmicka();
-                }
-                else if (evaluation_inp.value == 9){
-                    devina();
-                }
-                else if (evaluation_inp.value == 10){
-                    desina();
-                }
-            };
-
-            jeden.addEventListener('click', () => {
-                evaluation_inp.value = 1;
-                jednotka();
-            });
-
-            dva.addEventListener('click', () => {
-                evaluation_inp.value = 2;
-                dvojka();
-            });
-
-
-            tri.addEventListener('click', () => {
-                evaluation_inp.value = 3;
-                trojka();
-            });
-
-
-            styri.addEventListener('click', () => {
-                evaluation_inp.value = 4;
-                stvorka();
-            });
-
-
-            pat.addEventListener('click', () => {
-                evaluation_inp.value = 5;
-                patka();
-            });
-
-
-            sest.addEventListener('click', () => {
-                evaluation_inp.value = 6;
-                sestka();
-            });
-
-
-            sedem.addEventListener('click', () => {
-                evaluation_inp.value = 7;
-                sedmicka();
-            });
-
-
-            osem.addEventListener('click', () => {
-                evaluation_inp.value = 8;
-                osmicka();
-            });
-
-
-            devat.addEventListener('click', () => {
-                evaluation_inp.value = 9;
-                devina();
-            });
-
-
-            desat.addEventListener('click', () => {
-                evaluation_inp.value = 10;
+            }
+            else if (evaluation_inp.value == 10){
                 desina();
-            });
+            }
+        };
 
-            console.log(evaluation_inp.value);
-            zaciatok(evaluation_inp);
+        jeden.addEventListener('click', () => {
+            evaluation_inp.value = 1;
+            jednotka();
+        });
 
-            });
-
+        dva.addEventListener('click', () => {
+            evaluation_inp.value = 2;
+            dvojka();
         });
 
 
-            </script>
+        tri.addEventListener('click', () => {
+            evaluation_inp.value = 3;
+            trojka();
+        });
+
+
+        styri.addEventListener('click', () => {
+            evaluation_inp.value = 4;
+            stvorka();
+        });
+
+
+        pat.addEventListener('click', () => {
+            evaluation_inp.value = 5;
+            patka();
+        });
+
+
+        sest.addEventListener('click', () => {
+            evaluation_inp.value = 6;
+            sestka();
+        });
+
+
+        sedem.addEventListener('click', () => {
+            evaluation_inp.value = 7;
+            sedmicka();
+        });
+
+
+        osem.addEventListener('click', () => {
+            evaluation_inp.value = 8;
+            osmicka();
+        });
+
+
+        devat.addEventListener('click', () => {
+            evaluation_inp.value = 9;
+            devina();
+        });
+
+
+        desat.addEventListener('click', () => {
+            evaluation_inp.value = 10;
+            desina();
+        });
+
+        zaciatok(evaluation_inp);
+
+    });
+
+});
+
+
+const allHabitDivs = document.querySelectorAll("#habit-div");
+
+allHabitDivs.forEach(habitDiv => {
+
+    let saveBtn = habitDiv.querySelector("#submit");
+    let evaluationInp = habitDiv.querySelector("#evaluation");
+
+    function inpCheck(){
+        if (evaluationInp.value != "None")
+        {
+            saveBtn.disabled = false;
+        }
+        else
+        {
+            saveBtn.disabled = true;
+        }
+    };
+
+    setInterval(inpCheck, 100);
+
+});
+
+</script>
 
     </div>
-
-
+    {% else %}
+    <br><br><br><br><br><br><br><br><br><br>
+    <p>
+        <a href="/#new_habit" style="color:black">Create a habit first,</a> young Padawan
+    </p>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    {% endif %}
+    {% else %}
+    <br><br><br><br><br><br><br><br>
+    <p style="position:relative; top:100px;">
+        It's not time yet, young Padawan
+    </p>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    {% endif %}
 </body>
 
 </html>

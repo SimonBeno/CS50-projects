@@ -1,6 +1,100 @@
+function getDaysData(selEl){
+    var selectedHabit = $(selEl).val();
+    var mesiac = document.querySelector("#monthDisplayedField").value;
+    var rok = document.querySelector("#rokDisplayedField").value;
+
+    $.ajax({
+        url: '/habit?id=' + selectedHabit + '&mesiac=' + mesiac + '&rok=' + rok,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data)
+        {
+            console.log(data);
+            var table = document.getElementById('habit-table');
+
+            // Clear any existing rows from the table
+            table.innerHTML = '';
+            if(data.length != 0)
+            {
+                if (selectedHabit != "nist")
+                {
+
+                    table.innerHTML = '<thead id="table-head" ><tr><th>date:</th><th>evaluation:</th></tr></thead><tbody id="table-body"></tbody>';
+                    const tableHead = document.querySelector("#table-head");
+                    const tableBody = document.querySelector("#table-body");
+                    const habit_id = document.querySelector("#dropdown-menu").value;
+
+                    $.ajax({
+                        url: '/getcolor?habit_id=' + habit_id,
+                        type: 'GET',
+                        dataType: 'text',
+                        success: function(stringos) {
+                            if (stringos == "rot"){
+                                tableHead.style.backgroundColor = "rgba(255,0,0,0.5)";
+                            }
+                            else if (stringos == "orange"){
+                                tableHead.style.backgroundColor = "rgba(255, 137, 0,0.5)";
+                            }
+                            else if (stringos == "gelb"){
+                                tableHead.style.backgroundColor = "rgba(255, 255, 0,0.5)";
+                            }
+                            else if (stringos == "grün"){
+                                tableHead.style.backgroundColor = "rgba(0,255,0,0.5)";
+                            }
+                            else if (stringos == "blau"){
+                                tableHead.style.backgroundColor = "rgba(0,247,255,0.5)";
+                            }
+                            else if (stringos == "violett"){
+                                tableHead.style.backgroundColor = "rgba(160, 32, 240,0.5)";
+                            }
+                        }
+                    });
+
+                    // Loop through the habit data and create a new row for each entry
+                    for (var i = 0; i < data.length; i++)
+                    {
+                        if (data[i][0].name && data[i][0].month && data[i][0].evaluation)
+                        {
+                            var row = tableBody.insertRow();
+
+                            // Add cells to the row with the habit data
+                            var dateCell = row.insertCell();
+                            if (data[i][0].month)
+                            {
+                                dateCell.innerHTML = data[i][0].month + '/' + data[i][0].day + '/' + data[i][0].year;
+                            }
+
+                            var evaluationCell = row.insertCell();
+                            if (data[i][0].evaluation)
+                            {
+                                evaluationCell.innerHTML = data[i][0].evaluation;
+                            }
+                        };
+                    }//if data loop
+                }
+            }//if loop
+        }//succes f
+    });
+};
+
+
+
+$("#dropdown-menu").on('change', function(){
+    getDaysData(this);
+});
+
+
+
+
+
+
+
+
 const daysTag = document.querySelector(".days"),
 currentDate = document.querySelector(".current-date"),
 prevNextIcon = document.querySelectorAll(".icons span");
+let monthDisplayed = document.querySelector("#monthDisplayedField");
+let rokDisplayed = document.querySelector("#rokDisplayedField");
 
 // getting new date, current year and month
 let date = new Date(),
@@ -34,6 +128,15 @@ const renderCalendar = () => {
     }
     currentDate.innerText = `${months[currMonth]} ${currYear}`; // passing current mon and yr as currentDate text
     daysTag.innerHTML = liTag;
+    monthDisplayed.value = currMonth + 1;
+    rokDisplayed.value = currYear;
+
+    let dropMenu = document.getElementById("dropdown-menu");
+    if (dropMenu.selectedIndex !== -1){
+        getDaysData(dropMenu);
+    }
+
+
 }
 renderCalendar();
 
@@ -59,3 +162,9 @@ function redirectToDay(month, day, year) {
     window.location.href = `/day?month=${month}&day=${day}&year=${year}`;
 }
 
+
+function closeFlashAlert() {
+    $("#flash-messages").fadeOut("slow", function() {
+      $(this).remove();
+    });
+  }

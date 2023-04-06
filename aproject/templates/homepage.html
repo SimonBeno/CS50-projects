@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" >
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, width=device-width">
@@ -15,6 +15,20 @@
 
     <title>Disciplined</title>
     <link rel="icon" href="https://w7.pngwing.com/pngs/32/493/png-transparent-muscle-emoji-emoji-biceps-human-skin-color-muscle-arm-hand-orange-people.png" type="image/x-icon">
+
+    <!--   DaisyUI  -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
+
+
+    <!--   Bootstrap   -->
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" rel="stylesheet">
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
+    <link href="/static/styles.css" rel="stylesheet">
+
+    <!--  Jquery AJAX  -->
+    <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
     <style>
 
@@ -34,7 +48,8 @@
 
 <body>
 
-<div class="navig-bar" style="z-index:100; background-color:#ffffff; width:100%;">
+<div class="navig-bar" style="z-index:100; background-color:#ffffff; width:100%; ">
+    <div class="bg-navbar-img"></div>
     <nav class=" navbar navbar-expand-md navbar-light ">
         <div class="container-fluid ">
             <a class="navbar-brand" href="/">Disciplined</a>
@@ -56,61 +71,38 @@
 </div>
 
     {% if get_flashed_messages() %}
-        <header>
-            <div class="alert alert-primary mb-0 text-center" role="alert">
-                {{ get_flashed_messages() | join(" ") }}
-            </div>
-        </header>
-    {% endif %}
+    <div id="flash-messages" style="position: fixed; top: 73px; z-index:10;">
+        <div id="flash-alert" class="alert alert-success" role="alert">
+            <span id="flash-message" class="message">{{ get_flashed_messages() | join(" ") }}</span>
+            <button type="button" class="close" aria-label="Close" onclick="closeFlashAlert()">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endif %} 
+
 
     <main class="container-fluid py-5 text-center">
 
 
-
 <style>
     body {
-        background-color:rgb(200,200,255)
+        background-color:rgb(129,146,163)
 
     }
 
 </style>
 
-<h2 id="calendar" class="content"> Calendar</h2>
-
-
-<script>
-/*
-let squares = document.querySelectorAll('.square');
-
-squares.forEach((square) => {
-  const number = parseInt(square.getAttribute('scale_number'));
-
-  square.style.backgroundColor = `rgb(${255 - ((number - 1) * 25)}, ${255 - ((number - 1) * 25)}, ${255 - ((number - 1) * 25)})`;
-
-  square.addEventListener('click', () => {
-    squares.forEach((sq) => {
-      const sqNumber = parseInt(sq.getAttribute('scale_number'));
-
-      if (sqNumber <= number) {
-        sq.style.backgroundColor = `rgb(${255 - ((number - 1) * 25)}, ${sqNumber * 25}, ${sqNumber * 25})`;
-      }
-    });
-  });
-});
-*/
-
-</script>
-
 
 <br><br>
 
-
-<div class="wrapper">
+<div style=""> <!-- div pre cely kalendar a statistiku -->
+<div class="wrapper" style="position:relative;">
     <header>
     <p class="current-date"></p>
     <div class="icons">
-        <span id="prev" class="material-symbols-rounded">chevron_left</span>
-        <span id="next" class="material-symbols-rounded">chevron_right</span>
+        <span id="prev" class="material-symbols-rounded" style="color:#000000">chevron_left</span>
+        <span id="next" class="material-symbols-rounded" style="color:#000000">chevron_right</span>
     </div>
     </header>
     <div class="calendar">
@@ -127,19 +119,36 @@ squares.forEach((square) => {
     </div>
 </div>
 
+<div style="position:relative; margin-top:50px; margin-bottom:50px; display: inline-block;">
+    <input id="monthDisplayedField" type="hidden" >
+    <input id="rokDisplayedField" type="hidden" >
+    <select id="dropdown-menu" class="form-control " style="text-align:center; background-color:rgb(129,146,163) ; color:rgb(190,190,190); border-color:rgb(129,146,163); box-shadow: 0 10px 60px rgba(0,0,0,0.12);">
+        <option selected value="nist" >See how well you did this month</option>
+        {% for zvyk in habits %}
+        <option value="{{zvyk.id}}" >{{ zvyk.name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="overflow-x-auto">
+    <table id="habit-table" class="table" style="background-color:rgb(129,146,163); width:200px; border-radius:.5rem ; text-align:center; margin:auto; border-style:solid; border-color:rgb(0,0,0); box-shadow: 0 15px 40px rgba(0,0,0,0.3);">
+    </table>
+</div>
+</div>
+
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br id="habit_overview"><br><br>
+<br><br id="habit_overview">
 
-<h2 class="content"> Habit Overview </h2>
+<h2 class="content text-5xl"> Habit Overview </h2>
 
 <div>
 
-<br>
+<br><br>
 
 {% for habit in habits %}
 
-<div id="habitField" style="background-color:rgb(245,245,245); border-style: solid; border-radius:30px; width:400px; margin:auto; margin-bottom:70px;">
+<div id="habitField" style="background-color:rgb(129,146,163); border-style: solid; border-radius:30px; width:400px; margin:auto; margin-bottom:70px; box-shadow: 0 15px 40px rgba(0,0,0,0.12); ;">
     <div id="habitName" style="border-radius:30%; font-size:40px;">
         <input name="color" id="color" type="hidden" value="{{habit.color}}" >
         {{ habit.name }}
@@ -153,21 +162,53 @@ squares.forEach((square) => {
     <br>
     <div>{{ habit.description }}</div>
     <br>
-    <div> Start: {{ habit.start_month }}/{{ habit.start_day }}/{{ habit.start_year }} </div>
+    <div> From: {{ habit.start_month }}/{{ habit.start_day }}/{{ habit.start_year }} </div>
     <br>
     <div>
-        End:
         {% if habit.ende_year == 2103 and habit.ende_month == 2 and habit.ende_day == 14 %}
-            not set
+            Till the end of your life
         {% else %}
             {% if habit.expiration >= 0 %}
+            Till:
                 {{ habit.ende_month }}/{{ habit.ende_day }}/{{ habit.ende_year }} (in {{ habit.expiration }} days)
             {% else %}
+            Till:
                 {{ habit.ende_month }}/{{ habit.ende_day }}/{{ habit.ende_year }}
             {% endif %}
         {% endif %}
 
-    <!--<div id="expInField"> (in x days) </div>-->
+    <div>
+    <br>
+    {% if habit.weekdays %}
+        {% if habit.weekdays|length != 14 %}
+
+            {% for n in range(8) %}
+
+                {% if n|string in habit.weekdays %}
+                    {% if n == 1 %}
+                    Sun
+                    {% elif n == 2 %}
+                    Mon
+                    {% elif n == 3 %}
+                    Tue
+                    {% elif n == 4 %}
+                    Wed
+                    {% elif n == 5 %}
+                    Thur
+                    {% elif n == 6 %}
+                    Fri
+                    {% elif n == 7 %}
+                    Sat
+                    {% endif %}
+                {% endif %}
+
+            {% endfor %}
+
+        {% else %}
+        Every day
+        {% endif %}
+    {% endif %}
+    </div>
 
     </div>
     <br>
@@ -184,14 +225,15 @@ squares.forEach((square) => {
                 <input name="start_day" id="start_day" type="hidden" value="{{habit.start_day}}" >
                 <input name="start_year" id="start_year" type="hidden" value="{{habit.start_year}}">
                 <input name="color_val" id="color_val" type="hidden" value="{{habit.color}}">
-                <button type="submit"> Edit Habit </button>
+                <input name="weekdays" id="weekdays" type="hidden" value="{{habit.weekdays}}" >
+                <button type="submit" class="glass"> Edit Habit </button>
             </form>
         </div>
         <br>
         <div>
             <form action="/delete" method="post">
                 <input id="habit_id" name="habit_id" type="hidden" value="{{habit.id}}">
-                <button type="submit"> Delete Habit </button>
+                <button type="submit" class="glass"> Delete Habit </button>
             </form>
         </div>
         <br>
@@ -203,18 +245,23 @@ squares.forEach((square) => {
 
 </div>
 
+<div>
+
+</div>
+
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 <br id="new_habit">
-<h2 class="content"> Start a New Habit</h2>
+<br>
+<h2 class="content text-5xl"> Start a New Habit</h2>
 <div>
     <form action="/new_habit" method="post">
-        <div style="margin: 40px;"> <input id="habit-name" name="habit-name" type="text" autocomplete="off" placeholder="Name of the Habit" style="width:300px;" maxlength="50"> </div>
+        <div style="margin: 40px;"> <input class="input input-bordered w-full max-w-xs" id="habit-name" name="habit-name" type="text" autocomplete="off" placeholder="Name of the Habit" style="width:300px; " maxlength="50"> </div>
         <div style="margin: 40px;"> <input id="color-inp" name="color-inp" type="hidden"> </div>
-        <div style="margin: 40px;"> <textarea id="description" name="description" maxlength="200" placeholder="Add Description" type="text" autocomplete="off" style=" width: 200px; resize: none;" oninput='this.style.height = ""; this.style.height = this.scrollHeight + "px"'></textarea> </div>
+        <div style="margin: 40px;"> <textarea  class="input input-bordered w-full max-w-xs" id="description" name="description" maxlength="200" placeholder="Add Description" type="text" autocomplete="off" style=" width: 200px; resize: none;" oninput='this.style.height = ""; this.style.height = this.scrollHeight + "px"'></textarea> </div>
 
-        <div style=" background-color:rgb(240,240,240); position:relative; z-index:0; margin:40px; left:570px; width:200px; height: 150px;">
+        <div style=" background-color:#2A303C; position:relative; z-index:0; margin:40px; left:570px; width:200px; height: 150px; border-radius:8%;">
             <div style="position:absolute;">
                 <div id="red-button" style="background-color:rgb(255,0,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- RED --> </div>
                 <div id="orange-button" style="background-color:rgb(255,160,0); border-radius: 40%; width:40px; height:40px; margin:20px; opacity:0.3; border-style:none;"> <!-- ORANGE --></div>
@@ -229,11 +276,34 @@ squares.forEach((square) => {
             </div>
         </div>
 
+        <fieldset>
+        <div class="weekDays-selector">
+            <input type="checkbox" id="weekday-sun" class="weekday" name="weekday" value="1"/>
+            <label for="weekday-sun" class="weekendday">S</label>
+            <input type="checkbox" id="weekday-mon" class="weekday" name="weekday" value="2"/>
+            <label for="weekday-mon">M</label>
+            <input type="checkbox" id="weekday-tue" class="weekday" name="weekday"value="3"/>
+            <label for="weekday-tue">T</label>
+            <input type="checkbox" id="weekday-wed" class="weekday" name="weekday"value="4"/>
+            <label for="weekday-wed">W</label>
+            <input type="checkbox" id="weekday-thu" class="weekday" name="weekday"value="5"/>
+            <label for="weekday-thu">T</label>
+            <input type="checkbox" id="weekday-fri" class="weekday" name="weekday" value="6"/>
+            <label for="weekday-fri">F</label>
+            <input type="checkbox" id="weekday-sat" class="weekday" name="weekday" value="7"/>
+            <label for="weekday-sat" class="weekendday">S</label>
+          </div>
+        </fieldset>
+
+
+<br>
+
+
         <div>
             <div>Optionally, choose the duration of your habit. You can always change habits later.</div>
-            <div style="margin:20px;"> <input id="duration" name="duration" style="width:70px;" type="number" min="1" max="10000" oninput="validity.valid||(value='')"> </div>
+            <div style="margin:20px;"> <input class="input input-bordered w-full max-w-xs" id="duration" name="duration" style="width:100px;" placeholder="in days" type="number" min="1" max="10000" oninput="validity.valid||(value='')"> </div>
         </div>
-        <div style="margin: 40px;"> <button id="submit" type="submit"> Start Habit </button> </div>
+        <div style="margin: 40px;"> <button class="text-2xl glass" style="color:rgb(255,255,255)" id="submit" type="submit" disabled="true"> Start Habit </button> </div>
 
 
     </form>
@@ -242,6 +312,7 @@ squares.forEach((square) => {
 
 
     <script>
+
 
 window.addEventListener('load', () => {
     const expired = document.querySelectorAll("#expired");
@@ -311,22 +382,8 @@ window.addEventListener('load', () => {
         }
     });
 
-    /*
-    const habitFields = document.querySelectorAll("#habitField");
-
-    habitFields.forEach(habitField => {
-        console.log(habitField);
-
-        let ende_month = parseInt(habitField.querySelector("#ende_month").value);
-        let ende_day = parseInt(habitField.querySelector("#ende_day").value);
-        let ende_year = parseInt(habitField.querySelector("#ende_year").value);
-
-
-
-    });
-    */
-
 });
+
 
         let index = null;
 
@@ -534,10 +591,54 @@ window.addEventListener('load', () => {
             colorInput.value = index;
         });
 
+        let habit_name = document.querySelector("#habit-name");
+        let description = document.querySelector("#description");
+
+        function checkInputs(){
+
+            if (colorInput.value && habit_name.value && description.value)
+            {
+                submit.disabled = false;
+                submit.style.opacity = 1;
+            }
+            else
+            {
+                submit.disabled = true;
+                submit.style.opacity = 0.3;
+            }
+        };
+
+        setInterval(checkInputs, 100);
 
     </script>
 
+        <br>
+        <p>
+            Sign up for newsletter and notifications
+        </p>
+        <form action="email" method="post">
+            <input class="input" name="email" id="email" autocomplete="off" type="text" placeholder="example@example.com"  >
+            <button id="signup" class="bg-neutral ml-4" type="submit"><span style="color:rgb(255,255,255);" >Sign Up</span></button>
+        </form>
+        <script>
 
+        let emailInp = document.querySelector("#email");
+        let signUpBtn = document.querySelector("#signup");
+
+        function checkEmailInput(){
+            if (!emailInp.value){
+                signUpBtn.disabled = true;
+                signUpBtn.style.opacity = 0.3;
+            }
+            else
+            {
+                signUpBtn.disabled = false;
+                signUpBtn.style.opacity = 1;
+            }
+
+        };
+            setInterval(checkEmailInput, 100);
+        </script>
         </main>
 
         <!--
