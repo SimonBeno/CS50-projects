@@ -1,4 +1,3 @@
-(!UNFINISHED!)
 This is the final project of the CS50 course.
 I decided to develop a web application for creating, tracking and maintaining habits of user's choice. 
 User can create a habit, choose some specifications (like duration etc.), 
